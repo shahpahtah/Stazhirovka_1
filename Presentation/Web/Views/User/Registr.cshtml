@@ -1,0 +1,15 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model InputModel
+<form asp-action="Registr" method="post">
+    <div >
+        <label class="col-form-label" asp-for="Email">Email</label>
+        <input class="input-group-text" asp-for="Email" type="email" />
+        <label class="col-form-label" asp-for="Password">Password</label>
+        <input class="input-group-text" asp-for="Password"  />
+    </div>
+    <button class="btn btn-dark" type="submit">войти</button>
+</form>
