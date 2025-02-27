@@ -1,0 +1,35 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model ModelCabinet
+<form action="Edit" method="post" class="form-control-color" >
+
+    <label asp-for="NickName" label="col-form-label">Nickname</label>
+    <input asp-for="NickName" class="input-group-lg" placeholder="@Model.NickName" />
+    <label asp-for="Knowlege" label="col-form-label">Знания (через запятую)</label>
+    <input asp-for="Knowlege" class="input-group-lg" placeholder="@Model.Knowlege"/>
+    <label asp-for="DateAndTimeOfBirth" label="col-form-label">дата и время рождения</label>
+    <input asp-for="DateAndTimeOfBirth" class="input-group-lg" placeholder="@Model.DateAndTimeOfBirth" />
+    <label asp-for="PlaceOfBirth" label="col-form-label">место рождения</label>
+    <input asp-for="PlaceOfBirth" class="input-group-lg" placeholder="@Model.PlaceOfBirth" />
+    <label asp-for="PlaceOfNowLiving" label="col-form-label">место жительства</label>
+    <input asp-for="PlaceOfNowLiving" class="input-group-lg" placeholder="@Model.PlaceOfNowLiving" />
+    <label asp-for="Gender" label="col-form-label">Пол</label>
+    <input asp-for="Gender" class="input-group-lg" placeholder="@Model.Gender" />
+    @if (Model.AdditionalFields.Count> 0)
+    {
+        foreach(string i in Model.AdditionalFields.Keys)
+        {
+            <label asp-for="@i" label="col-form-label">@i</label>
+            <input asp-for="@Model.AdditionalFields[i]" class="input-group-lg" placeholder="@Model.AdditionalFields[i]" />
+        }
+    }
+    <button type="submit">ввести</button>
+    @if (Model.Role == "Admin")
+    {
+        <a asp-action="AddNewField">Добавить поле</a>
+    }
+
+</form>

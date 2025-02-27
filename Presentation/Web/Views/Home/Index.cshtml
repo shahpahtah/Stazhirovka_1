@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <a asp-action="Cabinet" asp-controller="User"><button class="btn btn-dark">Личный Кабинет</button></a>
+}
+else
+{
+    <div><a asp-action="Input" asp-controller="User"><button class="btn btn-dark">Войти</button></a></div>
+    <div><a asp-action="Registr" asp-controller="User"><button class="btn btn-dark">Зарегистрироваться</button></a></div>
+}
+
+
+
