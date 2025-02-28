@@ -2,7 +2,7 @@
 using st_1.Data;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using Data.EF.Migrations;
+
 
 namespace Web.Models
 {

@@ -8,17 +8,22 @@ using st_1;
 using st_1.Data;
 using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
+using Data.EF;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Web.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IUserService _service;
+        private readonly IUserService _UserService;
+        private readonly IFieldService _FieldService;
         public IJwtProvider JwtProvider { get; set; }
-        public UserController(IUserService service,IJwtProvider jwtprovider)
+        public UserController(IUserService service,IJwtProvider jwtprovider,IFieldService fieldService)
         {
-            _service = service;
+            _UserService = service;
             JwtProvider = jwtprovider;
+            _FieldService = fieldService;
         }
         public IActionResult Index()
         {
@@ -38,11 +43,11 @@ namespace Web.Controllers
         [HttpPost]
         public IActionResult Registr(InputModel model)
         {
-            User? new_user = _service.GetAllUsers().Where(i => i.Email == model.Email).FirstOrDefault();
+            User? new_user = _UserService.GetAllUsers().Where(i => i.Email == model.Email).FirstOrDefault();
             if (new_user == null)
             {
                 var user = st_1.User.Create(new Guid(), "default", Image.Create("default"), new List<string>(), "default", new DateTime(), "default", "default", model.Email, model.Password, "default");
-                _service.CreateUser(user);
+                _UserService.CreateUser(user);
                 var claims = new List<Claim> { new Claim(ClaimTypes.Name, model.Email) };
                 ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
 
@@ -58,7 +63,7 @@ namespace Web.Controllers
         public IActionResult Input(InputModel model)
         {
 
-            User? new_user = _service.GetAllUsers().Where(i => i.Email == model.Email).FirstOrDefault();
+            User? new_user = _UserService.GetAllUsers().Where(i => i.Email == model.Email).FirstOrDefault();
             if (new_user != null)
             {
                 if (new_user.Password != model.Password)
@@ -92,8 +97,12 @@ namespace Web.Controllers
 
             //// 3. Извлекаем claim email
 
+            var customFields = _FieldService.GetAllCustomFieldDefinitions();
 
-            var new_user = _service.GetAllUsers().Where(i => i.Email == currentUser.Identity.Name).FirstOrDefault();
+            // Pass the custom fields to the view via ViewBag
+            ViewBag.CustomFields = customFields;
+
+            var new_user = _UserService.GetAllUsers().Where(i => i.Email == currentUser.Identity.Name).FirstOrDefault();
             if (new_user != null)
             {
                 var model = new ModelCabinet()
@@ -104,8 +113,9 @@ namespace Web.Controllers
                     NickName = new_user.NickName,
                     PlaceOfBirth = new_user.PlaceOfBirth,
                     PlaceOfNowLiving = new_user.PlaceOfNowLiving,
-                    Role = new_user.Role
-                        };
+                    Role = new_user.Role,
+                    AdditionalFields=new_user.AdditionalFields
+                };
                 return View(model);
             }
             else {
@@ -117,10 +127,21 @@ namespace Web.Controllers
         }
         [HttpPost]
         public IActionResult Edit(ModelCabinet model)
+        {           
+            var customFields = new Dictionary<string, string>();
+        foreach (string key in Request.Form.Keys)
+    
+        if (key.StartsWith("CustomFields["))
         {
-            string jwtToken = Request.Cookies[".AspNetCore.Cookies"];
+            string fieldName = key.Substring("CustomFields[".Length).Replace("]", "");
+        string fieldValue = Request.Form[key];
+        customFields[fieldName] = fieldValue;
+        }
 
-            if (string.IsNullOrEmpty(jwtToken))
+
+        string jwtToken = Request.Cookies[".AspNetCore.Cookies"];
+
+        if (string.IsNullOrEmpty(jwtToken))
             {
                 return Unauthorized("JWT not found in cookie");
             }
@@ -132,25 +153,25 @@ namespace Web.Controllers
             //// 3. Извлекаем claim email
          
 
-            var new_user = _service.GetAllUsers().Where(i => i.Email == currentUser.Identity.Name).FirstOrDefault();
-            var user = st_1.User.Create(new_user.Id, model.NickName, new_user.Avatar, model.Knowlege.Split(",").ToList(), model.Gender, model.DateAndTimeOfBirth.Value, model.PlaceOfBirth, model.PlaceOfNowLiving, new_user.Email, new_user.Password, new_user.Role);
-            _service.UpdateUser(user);
+            var new_user = _UserService.GetAllUsers().Where(i => i.Email == currentUser.Identity.Name).FirstOrDefault();
+            var user = st_1.User.Create(new_user.Id, model.NickName, new_user.Avatar, model.Knowlege.Split(",").ToList(), model.Gender, model.DateAndTimeOfBirth.Value, model.PlaceOfBirth, model.PlaceOfNowLiving, new_user.Email, new_user.Password, new_user.Role,customFields);
+            
+            _UserService.UpdateUser(user);
             return RedirectToAction("Index","Home");
 
             
         }
         public IActionResult AddNewField()
         {
-            var field = new Field();
+            var field = new FieldModel();
             return View(field);
         }
         [HttpPost]
-        public IActionResult AddNewField(Field field)
+        public IActionResult AddNewField(FieldModel field)
         {
-            st_1.User.addFields(field.Key);
-            ClaimsPrincipal currentUser = this.User;
-            var new_user = _service.GetAllUsers().Where(i => i.Email == currentUser.Identity.Name).FirstOrDefault();
-            new_user.UpgradeField();
+            var fieldModel= Field.Create(new Guid(), field.Name, field.DataType);
+            _FieldService.CreateCustomFieldDefinition(fieldModel);
+
             return RedirectToAction("Cabinet");
         }
     }

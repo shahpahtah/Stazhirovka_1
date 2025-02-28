@@ -3,9 +3,11 @@
 *@
 @{
 }
-@model Field
+@model FieldModel
 <form asp-action="AddNewField" method="post">
-<label asp-for="Key" label="col-form-label">Название поля</label>
-<input asp-for="Key" class="input-group-lg" />
+<label asp-for="Name" label="col-form-label">Название поля</label>
+<input asp-for="Name" class="input-group-lg" />
+    <label asp-for="DataType" label="col-form-label">тип поля</label>
+    <input asp-for="DataType" class="input-group-lg" placeholder="string(строка),int(число),DateTime(дата и время)"/>
 <button type="submit">создать новое поле</button>
 </form>

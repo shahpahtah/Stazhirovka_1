@@ -4,7 +4,7 @@ namespace st_1
 {
     public class User
     {
-        private User(Guid id,string nickname,Image? avatar, List<string> knowlenge,string gender,DateTime date,string placeofBIrth,string placeofliving,string password,string email,string? role)
+        private User(Guid id,string nickname,Image? avatar, List<string> knowlenge,string gender,DateTime date,string placeofBIrth,string placeofliving,string password,string email,string? role,Dictionary<string,string>? fields=null)
         {
             Id = id;
             NickName = nickname;
@@ -17,15 +17,17 @@ namespace st_1
             Role = role;
             Password = password;
             Email = email;
+            if (fields != null) { AdditionalFields = fields; }
+            
         }
-        public static User Create(Guid id, string nickname, Image? avatar, List<string> knowlenge, string gender, DateTime date, string placeofBIrth, string placeofliving,string email,string password,string? role)
+        public static User Create(Guid id, string nickname, Image? avatar, List<string> knowlenge, string gender, DateTime date, string placeofBIrth, string placeofliving,string email,string password,string? role,Dictionary<string,string> fields=null)
         {
             
             if (role == null)
             {
                 role = "User";
             }
-            return new User(id, nickname, avatar, knowlenge, gender, date, placeofBIrth, placeofliving,password,email,role);
+            return new User(id, nickname, avatar, knowlenge, gender, date, placeofBIrth, placeofliving,password,email,role,fields);
         }
         public string Password { get; }
         public string Email { get; }
@@ -39,16 +41,6 @@ namespace st_1
         public string PlaceOfNowLiving { get; }
         public string Role { get; } = "User";
         public  Dictionary<string, string> AdditionalFields { get ; private set; } = new Dictionary<string, string>();
-        public static List<string> Fields { get; set; } = new List<string>();
-        public static int count=-1;
-        public static void addFields(string key)
-        {
-            count++;
-            Fields.Add(key);
-        }
-        public void UpgradeField()
-        {
-            AdditionalFields[Fields[count]] = "default";
-        }
+     
     }
 }

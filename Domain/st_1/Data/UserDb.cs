@@ -31,14 +31,14 @@ namespace st_1.Data
         public string? Role { get; set; }
         // Dictionary for additional fields
         [NotMapped]
-        public List<string> AdditionalFields
+        public Dictionary<string,string> AdditionalFields
         {
             get
             {
                 // Десериализуем из JSON при чтении
                 return string.IsNullOrEmpty(AdditionalFieldsJson)
-                    ? new List< string>()
-                    : JsonConvert.DeserializeObject<List<string>>(AdditionalFieldsJson);
+                    ? new Dictionary< string,string>()
+                    : JsonConvert.DeserializeObject<Dictionary<string,string>>(AdditionalFieldsJson);
             }
             set
             {

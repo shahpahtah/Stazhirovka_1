@@ -1,4 +1,5 @@
-﻿@*
+﻿@using st_1
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -18,13 +19,20 @@
     <input asp-for="PlaceOfNowLiving" class="input-group-lg" placeholder="@Model.PlaceOfNowLiving" />
     <label asp-for="Gender" label="col-form-label">Пол</label>
     <input asp-for="Gender" class="input-group-lg" placeholder="@Model.Gender" />
-    @if (Model.AdditionalFields.Count> 0)
+    @foreach (var field in ViewBag.CustomFields as List<Field>)
     {
-        foreach(string i in Model.AdditionalFields.Keys)
-        {
-            <label asp-for="@i" label="col-form-label">@i</label>
-            <input asp-for="@Model.AdditionalFields[i]" class="input-group-lg" placeholder="@Model.AdditionalFields[i]" />
-        }
+        <div class="form-group">
+            <label for="@field.Name">@field.Name:</label>
+            @if (field.DataType == "string")
+            {
+                <input  type="text" name="CustomFields[@field.Name]" class="form-control" value="@Model.AdditionalFields.GetValueOrDefault(field.Name)" />
+            }
+            else if (field.DataType == "int")
+            {
+                <input type="number" name="CustomFields[@field.Name]" class="form-control" value="@Model.AdditionalFields.GetValueOrDefault(field.Name)" />
+            }
+            <!-- Add more data types as needed -->
+        </div>
     }
     <button type="submit">ввести</button>
     @if (Model.Role == "Admin")

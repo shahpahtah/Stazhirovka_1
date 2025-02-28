@@ -53,6 +53,7 @@ using System.Collections.Generic;
             userDb.Avatar = Mapper.Map(user.Avatar);
             userDb.NickName = user.NickName;
             userDb.KnowledgeJson= JsonConvert.SerializeObject(user.Knowlenge);
+            userDb.AdditionalFields = user.AdditionalFields;
             _context.UserProfiles.Update(userDb);
                  _context.SaveChanges();
             }

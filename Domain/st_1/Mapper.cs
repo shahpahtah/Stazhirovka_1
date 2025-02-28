@@ -12,7 +12,7 @@ namespace st_1
     {
         public static User Map(UserDb db)
         {
-            return User.Create(db.Id, db.NickName, Mapper.Map(db.Avatar), db.Knowledge, db.Gender, db.DateAndTimeOfBirth.Value, db.PlaceOfBirth, db.PlaceOfNowLiving, db.Email, db.Password, db.Role);
+            return User.Create(db.Id, db.NickName, Mapper.Map(db.Avatar), db.Knowledge, db.Gender, db.DateAndTimeOfBirth.Value, db.PlaceOfBirth, db.PlaceOfNowLiving, db.Email, db.Password, db.Role,db.AdditionalFields);
         }
         public  static UserDb Map(User user)
         {
@@ -30,6 +30,14 @@ namespace st_1
         public static ImageDb Map(Image image)
         {
             return new ImageDb { FileName = image.FileName, UserId = image.UserId };
+        }
+        public  static Field Map (FieldDb db)
+        {
+            return Field.Create(db.Id, db.Name, db.DataType);
+        }
+        public static FieldDb Map(Field model)
+        {
+            return new FieldDb { DataType = model.DataType, Name = model.Name, Id = model.Id };
         }
     }
 }

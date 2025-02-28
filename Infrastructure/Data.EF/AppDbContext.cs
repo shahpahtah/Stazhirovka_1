@@ -16,7 +16,7 @@ namespace Data.EF
         }
 
         public DbSet<UserDb> UserProfiles { get; set; }
-
+        public DbSet<FieldDb> Fields { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
